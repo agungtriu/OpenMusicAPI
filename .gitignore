@@ -1,0 +1,4 @@
+/hapi/node_modules
+/hapi/.env
+/hapi/.prod.env
+/openmusic-api-webserver.pem

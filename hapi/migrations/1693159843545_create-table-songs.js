@@ -16,11 +16,11 @@ exports.up = (pgm) => {
       type: 'INTEGER',
       notNull: true,
     },
-    genre: {
+    performer: {
       type: 'TEXT',
       notNull: true,
     },
-    performer: {
+    genre: {
       type: 'TEXT',
       notNull: true,
     },
@@ -28,7 +28,7 @@ exports.up = (pgm) => {
       type: 'INTEGER',
       notNull: false,
     },
-    albumId: {
+    album_id: {
       type: 'TEXT',
       notNull: false,
     },

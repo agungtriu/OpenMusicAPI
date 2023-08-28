@@ -12,6 +12,7 @@
     "linebreak-style": 0,
     "no-underscore-dangle": "off",
     "import/no-extraneous-dependencies": "off",
-    "no-console": "off"
+    "no-console": "off",
+    "no-unused-vars": "off"
   }
 }

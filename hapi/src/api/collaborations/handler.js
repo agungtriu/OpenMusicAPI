@@ -5,7 +5,7 @@ class CollaborationsHandler {
     collaborationsService,
     playlistsService,
     usersService,
-    validator
+    validator,
   ) {
     this._collaborationsService = collaborationsService;
     this._playlistsService = playlistsService;
@@ -22,7 +22,7 @@ class CollaborationsHandler {
     await this._usersService.verifyUserById(userId);
     const collaborationId = await this._collaborationsService.addCollaboration(
       playlistId,
-      userId
+      userId,
     );
 
     const response = h.response({

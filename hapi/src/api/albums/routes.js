@@ -36,7 +36,7 @@ const routes = (handler) => [
   },
   {
     method: 'GET',
-    path: '/{param*}',
+    path: '/images/{param*}',
     handler: {
       directory: {
         path: resolve(__dirname, 'file'),

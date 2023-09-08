@@ -2,6 +2,8 @@ require('dotenv').config();
 
 const Hapi = require('@hapi/hapi');
 const Jwt = require('@hapi/jwt');
+const path = require('path');
+const Inert = require('@hapi/inert');
 const {
   AlbumsService,
   SongsService,
@@ -19,6 +21,8 @@ const {
   PlaylistsValidator,
   AuthenticationsValidator,
   CollaborationsValidator,
+  ExportPlaylistsValidator,
+  UploadsValidator,
 } = require('./validator');
 const {
   albums,
@@ -30,9 +34,14 @@ const {
 } = require('./api');
 const { ClientError } = require('./exceptions');
 const TokenManager = require('./tokenize/TokenManager');
+const _exports = require('./api/exports');
+const ProducerService = require('./services/rabbitmq/ProducerService');
+const StorageService = require('./services/storage/StorageService');
+const CacheService = require('./services/redis/CacheService');
 
 const init = async () => {
-  const albumsService = new AlbumsService();
+  const cacheService = new CacheService();
+  const albumsService = new AlbumsService(cacheService);
   const songsService = new SongsService();
   const authenticationsService = new AuthenticationsService();
   const usersService = new UsersService();
@@ -41,6 +50,9 @@ const init = async () => {
   const playlistSongsService = new PlaylistSongsService();
   const playlistActivitiesService = new PlaylistActivitiesService();
 
+  const storageService = new StorageService(
+    path.resolve(__dirname, 'api/albums/file/images'),
+  );
   const server = Hapi.server({
     port: process.env.PORT,
     host: process.env.HOST,
@@ -54,6 +66,9 @@ const init = async () => {
   await server.register([
     {
       plugin: Jwt,
+    },
+    {
+      plugin: Inert,
     },
   ]);
 
@@ -76,7 +91,12 @@ const init = async () => {
   await server.register([
     {
       plugin: albums,
-      options: { service: albumsService, validator: AlbumsValidator },
+      options: {
+        service: albumsService,
+        uploadsService: storageService,
+        validator: AlbumsValidator,
+        uploadsValidator: UploadsValidator,
+      },
     },
     {
       plugin: songs,
@@ -111,6 +131,14 @@ const init = async () => {
         playlistsService,
         usersService,
         validator: CollaborationsValidator,
+      },
+    },
+    {
+      plugin: _exports,
+      options: {
+        producerService: ProducerService,
+        playlistsService,
+        validator: ExportPlaylistsValidator,
       },
     },
   ]);

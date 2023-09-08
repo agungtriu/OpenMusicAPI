@@ -2,3 +2,4 @@
 /hapi/.env
 /hapi/.prod.env
 /openmusic-api-webserver.pem
+/hapi/src/api/albums/file
